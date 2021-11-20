@@ -24,14 +24,31 @@ func NewLogger(level string, fields ...zapcore.Field) (*zap.Logger, error) {
 		return nil, err
 	}
 	// To keep the example deterministic, disable timestamps in the output.
-	encoderCfg := zap.NewProductionEncoderConfig()
+	//encoderCfg := zap.NewProductionEncoderConfig()
 	//encoderCfg.TimeKey = ""
+
+	//l := zap.New(zapcore.NewCore(
+	//	zapcore.NewConsoleEncoder(encoderCfg),
+	//	zapcore.Lock(os.Stdout),
+	//	atom,
+	//)).With(fields...)
+
+	//l, err := zap.NewProduction()
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	encoderCfg := zap.NewProductionEncoderConfig()
+	encoderCfg.TimeKey = "timestamp"
+	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
 
 	l := zap.New(zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoderCfg),
 		zapcore.Lock(os.Stdout),
 		atom,
 	)).With(fields...)
+
+	defer l.Sync()
 
 	return l, nil
 }
